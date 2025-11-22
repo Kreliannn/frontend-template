@@ -1,6 +1,6 @@
 "use client"
-import Link from "next/link";
-import { PackagePlus, Home, LogOut, Menu, X } from "lucide-react"
+import Link from "next/link"
+import { Calendar, Home, Building, Search, UserPlus2, User, FileText, BarChart3, Building2, LogOut, Menu, X, MenuIcon, Receipt, Recycle, Activity } from "lucide-react"
 import { useState } from "react"
 import {
   Sidebar,
@@ -15,40 +15,20 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
 
-
-// Navigation items
 const navigationItems = [
-  {
-    title: "Dashboard",
-    url: "/pages/cashier/home",
-    icon: Home,
-  },
-  {
-    title: "Pos",
-    url: "/pages/cashier/pos",
-    icon: PackagePlus,
-  },
-  {
-    title: "Orders",
-    url: "/pages/cashier/orders",
-    icon: PackagePlus,
-  },
-  {
-    title: "Transaction",
-    url: "/pages/cashier/transaction",
-    icon: PackagePlus,
-  },
+  { title: "Dashboard", url: "/pages/admin/home", icon: Home },
+  { title: "Employee", url: "/pages/admin/addEmployee", icon: UserPlus2 },
+  { title: "Branch", url: "/pages/admin/addBranch", icon: Building },
+  { title: "Products", url: "/pages/admin/products", icon: MenuIcon },
+  { title: "Transactions", url: "/pages/admin/transactions", icon: Receipt },
+  { title: "Activities", url: "/pages/admin/activities", icon: Activity },
+  { title: "Waste", url: "/pages/admin/waste", icon: Recycle },
+  { title: "Shift", url: "/pages/admin/shift", icon: Calendar },
 ]
 
 const accountItems = [
-  {
-    title: "Logout",
-    url: "/",
-    icon: LogOut,
-  }
+  { title: "Logout", url: "/", icon: LogOut }
 ]
 
 interface AppSidebarProps {
@@ -56,62 +36,86 @@ interface AppSidebarProps {
 }
 
 export function TestSideBar({ className }: AppSidebarProps) {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
-  
-  const toggleSidebar = () => {
-    setIsOpen(!isOpen)
-  }
+  const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen)
+  const closeMobileMenu = () => setIsMobileMenuOpen(false)
 
   return (
     <>
-      {/* Toggle Button */}
-      <Button
-        onClick={toggleSidebar}
-        variant="outline"
-        size="icon"
-        className="fixed top-4 left-4 z-50 lg:hidden"
-      >
-        {isOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-      </Button>
+      {/* Mobile Navbar */}
+      <div className="lg:hidden bg-white text-black p-4 flex items-center justify-between fixed top-0 left-0 right-0 z-50 border-b">
+        <div className="flex items-center gap-3">
+          <div className="aspect-square size-8 overflow-hidden rounded-lg">
+            <img src="/web/logo.jpg" alt="Logo" className="object-cover w-full h-full rounded-lg" />
+          </div>
+          <div className="flex flex-col">
+            <span className="font-semibold text-sm">Admin</span>
+            <span className="text-xs text-gray-500">xxxx</span>
+          </div>
+        </div>
+        <button
+          onClick={toggleMobileMenu}
+          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+        >
+          {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+      </div>
 
-      {/* Desktop Toggle Button */}
-      <Button
-        onClick={toggleSidebar}
-        variant="outline"
-        size="icon"
-        className="hidden lg:flex fixed top-4 left-4 z-50"
-      >
-        {isOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-      </Button>
+      {/* Mobile Sidebar Drawer */}
+      {isMobileMenuOpen && (
+        <div className="lg:hidden fixed inset-0 z-40 bg-black bg-opacity-20" onClick={closeMobileMenu}>
+          <div className="fixed top-0 left-0 w-64 h-full bg-white shadow-lg transform transition-transform duration-300 ease-in-out">
+            <div className="pt-20 px-4">
+              <div className="mb-6">
+                <h3 className="text-gray-700 text-sm font-medium mb-3">Section</h3>
+                <nav className="space-y-2">
+                  {navigationItems.map((item) => (
+                    <Link
+                      key={item.title}
+                      href={item.url}
+                      onClick={closeMobileMenu}
+                      className="flex items-center gap-3 px-3 py-2 text-black hover:bg-gray-100 rounded-lg transition-colors"
+                    >
+                      <item.icon size={20} />
+                      <span>{item.title}</span>
+                    </Link>
+                  ))}
+                </nav>
+              </div>
 
-      {/* Overlay for mobile */}
-      {isOpen && (
-        <div
-          className="fixed inset-0 bg-black/50 z-30 lg:hidden"
-          onClick={() => setIsOpen(false)}
-        />
+              <div className="absolute bottom-6 left-4 right-4">
+                {accountItems.map((item) => (
+                  <Link
+                    key={item.title}
+                    href={item.url}
+                    onClick={closeMobileMenu}
+                    className="flex items-center gap-3 px-3 py-2 text-black hover:bg-gray-100 rounded-lg transition-colors"
+                  >
+                    <item.icon size={20} />
+                    <span>{item.title}</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
       )}
 
-      {/* Sidebar */}
-      <div
-        className={cn(
-          "fixed left-0 top-0 z-40 h-full transition-transform duration-300 ease-in-out",
-          isOpen ? "translate-x-0" : "-translate-x-full"
-        )}
-      >
-        <Sidebar className={className}>
-        <SidebarHeader className="pt-16">
+      {/* Desktop Sidebar */}
+      <Sidebar className={`hidden lg:flex bg-white border-r ${className}`}>
+        {/* Header */}
+        <SidebarHeader className="bg-white border-b">
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton size="lg" asChild>
+              <SidebarMenuButton size="lg" asChild className="hover:bg-gray-100">
                 <a href="/" className="font-semibold">
-                  <div className="aspect-square size-8 overflow-hidden rounded-lg w-10 h-10">
+                  <div className="aspect-square size-8 overflow-hidden rounded-lg">
                     <img src="/web/logo.jpg" alt="Logo" className="object-cover w-full h-full rounded-lg" />
                   </div>
                   <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold">The Barracks</span>
-                    <span className="truncate text-xs text-sidebar-foreground/70"> test </span>
+                    <span className="truncate font-semibold text-black">Admin</span>
+                    <span className="truncate text-xs text-gray-500">xxxx</span>
                   </div>
                 </a>
               </SidebarMenuButton>
@@ -119,34 +123,34 @@ export function TestSideBar({ className }: AppSidebarProps) {
           </SidebarMenu>
         </SidebarHeader>
 
-        <SidebarContent>
+        {/* Navigation */}
+        <SidebarContent className="bg-white">
           <SidebarGroup>
-            <SidebarGroupLabel>Section</SidebarGroupLabel>
+            <SidebarGroupLabel className="text-gray-700">Section</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                {navigationItems.map((item) => {
-                  return (
-                    <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton asChild>
-                        <Link href={item.url} onClick={() => setIsOpen(false)}>
-                          <item.icon />
-                          <span>{item.title}</span>
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  )
-                })}
+                {navigationItems.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild className="text-black hover:bg-gray-100">
+                      <Link href={item.url}>
+                        <item.icon />
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
 
-        <SidebarFooter>
+        {/* Footer */}
+        <SidebarFooter className="bg-white border-t">
           <SidebarMenu>
             {accountItems.map((item) => (
-              <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton asChild  > 
-                  <Link href={item.url} onClick={() => setIsOpen(false)}>
+              <SidebarMenuItem key={item.title} className="text-black">
+                <SidebarMenuButton asChild className="hover:bg-gray-100">
+                  <Link href={item.url}>
                     <item.icon />
                     <span>{item.title}</span>
                   </Link>
@@ -157,8 +161,7 @@ export function TestSideBar({ className }: AppSidebarProps) {
         </SidebarFooter>
 
         <SidebarRail />
-        </Sidebar>
-      </div>
+      </Sidebar>
     </>
   )
 }
