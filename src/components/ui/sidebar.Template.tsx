@@ -55,7 +55,7 @@ interface AppSidebarProps {
   className?: string
 }
 
-export function CashierSideBar({ className }: AppSidebarProps) {
+export function TestSideBar({ className }: AppSidebarProps) {
   const [isOpen, setIsOpen] = useState(false)
 
   
